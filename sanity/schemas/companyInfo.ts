@@ -16,6 +16,7 @@ export const companyInfo = defineType({
   type: 'document',
   groups: [
     { name: 'textos', title: 'Textos', default: true },
+    { name: 'portada', title: 'Mosaico de portada' },
     { name: 'cifras', title: 'Cifras' },
     { name: 'historia', title: 'Historia y grupo' },
     { name: 'contacto', title: 'Contacto' },
@@ -31,6 +32,22 @@ export const companyInfo = defineType({
         'La frase grande que abre la web, sobre la foto. Corta: en móvil no caben más ' +
         'de ocho o nueve palabras sin partirse en cinco líneas.',
     }),
+
+    defineField({
+      name: 'heroMontage',
+      title: 'Imágenes del mosaico',
+      type: 'array',
+      of: [{ type: 'plantImage' }],
+      group: 'portada',
+      validation: (rule) => rule.required().min(3).max(8),
+      description:
+        'Lo primero que se ve al abrir la web: un mosaico de fotos con movimiento lento. ' +
+        'Entre tres y ocho. La PRIMERA ocupa la pieza grande y es la que más se ve, así que ' +
+        'conviene que sea la más potente y la de mayor resolución; las demás rellenan las ' +
+        'piezas pequeñas. Funciona mejor con fotos de textura (hilo o bobina de cerca) que ' +
+        'con bodegones sobre fondo blanco, que en el mosaico se ven como manchas claras.',
+    }),
+
     defineField({
       name: 'statement',
       title: 'Descripción de la empresa',

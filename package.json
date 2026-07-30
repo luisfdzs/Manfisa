@@ -13,10 +13,10 @@
     "format": "prettier --write .",
     "check:mobile": "node scripts/check-mobile.mjs",
     "brand": "node scripts/generate-brand-assets.mjs",
-    "placeholders": "node scripts/generate-placeholders.mjs",
-    "migrate:build": "npm run placeholders && node scripts/build-sanity-import.mjs",
+    "migrate:build": "npm run images && node scripts/build-sanity-import.mjs",
     "migrate:import": "sanity dataset import scripts/migration/import.ndjson --dataset production --replace",
-    "migrate:sanity": "npm run migrate:build && npm run migrate:import"
+    "migrate:sanity": "npm run migrate:build && npm run migrate:import",
+    "images": "node scripts/fetch-images.mjs"
   },
   "dependencies": {
     "@sanity/client": "^7.25.0",

@@ -75,6 +75,61 @@
 }
 
 /* ============================================================================
+   Mosaico de portada
+   El movimiento del hero se hace con CSS, no con vídeo. Un hero en vídeo son varios
+   megabytes que compiten con el LCP y que en móvil muchas veces ni se reproducen solos;
+   un zoom lento sobre una foto que ya hay que descargar cuesta cero bytes extra y se ve
+   igual de vivo. Además, así el mosaico lo edita cualquiera desde el panel: son imágenes,
+   no un montaje que haya que volver a renderizar.
+   ========================================================================= */
+
+/* Deriva lenta: acerca y desplaza un poco. `alternate` evita el salto al reiniciar, que
+   es lo que delata que algo está en bucle. */
+@keyframes montage-drift {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.16) translate3d(-1.5%, -1.5%, 0);
+  }
+}
+
+/* Entrada escalonada de cada pieza al cargar. */
+@keyframes montage-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility montage-tile {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-inverse);
+  animation: montage-in 1s var(--ease-out-soft) both;
+
+  /* `--drift` lo fija cada pieza para que no deriven todas al mismo ritmo. Se hereda desde
+     el contenedor, así que el componente no necesita tocar la imagen. */
+  & img {
+    animation: montage-drift var(--drift, 26s) ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  /* Sin movimiento si el sistema lo pide: la foto se queda quieta y ya está. */
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+
+    & img {
+      animation: none;
+    }
+  }
+}
+
+/* ============================================================================
    Base
    ========================================================================= */
 
