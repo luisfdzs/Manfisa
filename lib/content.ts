@@ -104,9 +104,9 @@ const figureSchema = z.object({ value: z.string().min(1), label: localizedString
 
 const companySchema = z.object({
   claim: localizedString,
-  // Mínimo tres: con menos, el mosaico de la portada no tiene piezas que combinar y queda
-  // como una foto suelta mal recortada. El panel exige lo mismo.
-  heroMontage: z.array(imageSchema).min(3),
+  // Mínimo seis: el muro de la portada son cuatro columnas, y con menos se nota que las
+  // fotos se repiten dentro de la misma pantalla. El panel exige lo mismo.
+  heroMontage: z.array(imageSchema).min(6),
   statement: localizedParagraphs,
   values: localizedList,
   figures: z.array(figureSchema).min(2),
