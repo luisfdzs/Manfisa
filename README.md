@@ -35,7 +35,7 @@ npm run dev                  # http://localhost:3000
 | `npm run check:mobile`   | 26 comprobaciones en un Chrome real a 390×844 (ver más abajo)      |
 | `npm run format`         | Aplica Prettier a todo el proyecto                                 |
 | `npm run brand`          | Genera favicon, icono de iOS e imagen de compartir (OG)            |
-| `npm run placeholders`   | Genera las imágenes provisionales de catálogo                      |
+| `npm run images`         | Descarga de manfisa.com las fotos del catálogo y las prepara       |
 | `npm run migrate:sanity` | Carga el contenido inicial en Sanity (idempotente)                 |
 
 ## ⚠️ Antes de publicar en producción
@@ -59,7 +59,8 @@ anuncio oficial de la segregación): CIF y fecha de constitución de la matriz (
 4. **Certificaciones** — números y alcances de ISO 9001 / ISO 14001.
 5. **Logotipo** — el wordmark y el favicon son un montaje tipográfico provisional
    (`components/layout/Wordmark.tsx`, `scripts/generate-brand-assets.mjs`).
-6. **Fotografía** — el catálogo usa imágenes provisionales generadas, marcadas como tales.
+6. **Fotografía** — ya no hay imágenes inventadas: todas son de manfisa.com (ver más abajo).
+   Lo que falta son **originales a mayor resolución** de las fotos de formato.
 
 No se ha inventado **ningún CIF** de las sociedades cuyo identificador no es público (el de Manfisa
 Wire, entre ellos): un identificador oficial falso no es lo mismo que una especificación técnica
@@ -101,17 +102,18 @@ estética con un titular gigante.
 
 ### Puesta en marcha del panel
 
-Ya está hecho: proyecto de Sanity **`65pypeao`**, dataset `production`, orígenes CORS dados de
-alta para localhost y los tres dominios, y contenido inicial importado. Lo que queda:
+Ya está hecho: proyecto de Sanity **`65pypeao`**, dataset `production`, orígenes CORS, contenido
+importado y **los dos webhooks de revalidación** (`revalidate-test` y `revalidate-prod`),
+verificados de extremo a extremo: de pulsar «Publicar» a verlo en la web pasan unos 10 segundos.
 
-1. **El webhook de revalidación, a mano** en sanity.io/manage › API › Webhooks: URL
-   `https://manfisatest.vercel.app/api/revalidate`, dataset `production`, triggers
-   create/update/delete, y el **secreto** de `SANITY_REVALIDATE_SECRET` (está en `.env.local`).
-   No se puede automatizar: `sanity hooks create` es interactivo, y el endpoint de la Management
-   API que responde para este proyecto es el **antiguo, que no acepta `secret`** — un hook creado
-   así fallaría la verificación de firma de `parseBody` y devolvería 401 en cada publicación, o
-   sea, peor que no tenerlo.
-2. Invitar a quien vaya a editar en sanity.io/manage › Members.
+Sólo queda **invitar a quien vaya a editar** en sanity.io/manage › Members.
+
+> Si hay que recrear un webhook: `sanity hooks create` es interactivo y no sirve sin TTY, pero la
+> Management API sí. `POST https://api.sanity.io/v2022-05-05/hooks/projects/{projectId}` con
+> `rule: { on: [...] }` — **`on` va anidado, no en la raíz**; `rule.filter` y `rule.projection` se
+> omiten (con `null` exige string) y `isDisabled` no se acepta al crear. El `secret` es
+> obligatorio: sin él, `parseBody` devuelve 401 en cada publicación mientras el panel muestra el
+> webhook en verde.
 
 Los dos proyectos de Vercel (`manfisa` y `manfisatest`) están creados, conectados al repo, con las
 tres variables en los tres entornos y con la **Production Branch ya correcta** (`main` y `test`
@@ -143,8 +145,9 @@ sanity/
 scripts/
   check-mobile.mjs          ← 26 comprobaciones en Chrome real (npm run check:mobile)
   generate-brand-assets.mjs ← favicon + OG desde la marca (npm run brand)
-  generate-placeholders.mjs ← imágenes provisionales de catálogo
-  build-sanity-import.mjs   ← snapshot → NDJSON para sanity dataset import
+  source-images.mjs         ← QUÉ FOTO va en cada sitio, con su texto alternativo
+  fetch-images.mjs          ← las descarga de manfisa.com y las prepara (npm run images)
+  build-sanity-import.mjs   ← snapshot + fotos → NDJSON para sanity dataset import
   migration/content-snapshot.mjs ← CONTENIDO INICIAL, con el aviso de qué está sin validar
 proxy.ts                 ← negocia el idioma y redirige / → /es | /en | /fr
                            (en Next 16 `middleware.ts` se llama `proxy.ts`)
@@ -164,6 +167,36 @@ Cinco decisiones que conviene entender antes de tocar código:
 5. **Las tablas técnicas usan la utilidad `spec-table`** y van dentro de un contenedor con
    `overflow-x: auto`. Es lo que permite que cinco columnas de datos quepan en un móvil sin que
    la página desborde. `npm run check:mobile` lo verifica.
+
+## Imágenes
+
+**Todas las fotografías salen de manfisa.com**, así que son producto real de la casa y no hay
+duda de licencia ni de verosimilitud. `scripts/source-images.mjs` declara qué foto va en cada
+sitio y con qué texto alternativo en los tres idiomas; `npm run images` las descarga y las pasa
+a WebP, y la migración las sube a Sanity.
+
+**No se usa stock, y fue una decisión, no un olvido.** Se buscó en Wikimedia Commons y
+Openverse: lo poco relevante estaba en **CC BY-SA**, que impone atribución visible y
+_share-alike_ sobre los recortes — una obligación permanente en una web corporativa a cambio de
+una foto de relleno. Unsplash y Pexels sí permiten uso comercial sin atribución, pero exigen
+clave de API para descargar de forma programática.
+
+⚠️ **Limitación del material:** varias fotos de formato (`rollos_*`, `rosaceas_*`) sólo existen
+en manfisa.com a **329×168 px**. Por eso ninguna se usa como portada —las portadas salen siempre
+de las imágenes grandes— y la galería de la ficha va a **tres columnas**, donde no se amplían.
+`fetch-images.mjs` nunca escala hacia arriba y avisa por consola de cuáles son pequeñas.
+
+### El mosaico de portada
+
+Lo primero que se ve es un mosaico de fotos de planta con movimiento lento, al modo del hero de
+sanity.io. Se edita desde el panel («Empresa y contacto» › Mosaico de portada): entre tres y ocho
+imágenes, y la primera ocupa la pieza grande.
+
+**No es vídeo, a propósito.** Un hero en vídeo son megabytes compitiendo con el LCP y un autoplay
+que en móvil falla a menudo. El movimiento se hace con un zoom lento por CSS (`montage-tile` en
+`globals.css`) sobre imágenes que de todas formas hay que descargar: mismo efecto percibido, cero
+peso añadido, y lo cambia cualquiera desde el panel porque son sólo imágenes. Se respeta
+`prefers-reduced-motion`.
 
 ## Idiomas
 

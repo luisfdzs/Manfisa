@@ -72,11 +72,14 @@ next-env.d.ts
 *.tsbuildinfo
 
 # --- Migración a Sanity ---
-# Generados por `npm run migrate:build` a partir de content-snapshot.mjs, que sí se
-# versiona: es la fuente. Regenerar sale gratis, así que versionarlos sólo añade ruido
-# a los diffs (y 5 JPEG de 2400 px al repo).
+# Todo esto lo REGENERA `npm run migrate:build` a partir de los dos ficheros que sí se
+# versionan y que son la fuente: `content-snapshot.mjs` (los textos) y `source-images.mjs`
+# (qué fotos de manfisa.com se usan y en qué sitio). Versionar los binarios sólo añadiría
+# ruido a los diffs y decenas de MB al repo, para material que ya vive en manfisa.com y,
+# una vez subido, en la CDN de Sanity.
 scripts/migration/import.ndjson
-scripts/migration/placeholders/
+scripts/migration/media/
+assets-src/
 
 # --- Contexto de Claude ---
 # El contexto vive en la rama huérfana `claude`, no en las ramas de código. Ignorarlos

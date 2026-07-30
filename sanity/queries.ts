@@ -53,6 +53,7 @@ export const PRODUCT_LINE_SLUGS_QUERY = defineQuery(`
 export const COMPANY_QUERY = defineQuery(`
   *[_type == "companyInfo"][0] {
     claim,
+    "heroMontage": heroMontage[] ${IMAGE},
     statement,
     values,
     "figures": figures[] { value, label },

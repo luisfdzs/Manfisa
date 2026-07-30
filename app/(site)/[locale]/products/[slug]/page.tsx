@@ -141,13 +141,17 @@ export default async function ProductLinePage({
       {gallery.length > 0 && (
         <section className="page-gutter pt-(--spacing-section)">
           <SectionHeading>{t.line.gallery}</SectionHeading>
-          <div className="mt-10 grid gap-8 md:grid-cols-2">
+          {/* Tres columnas, no dos. Varias fotos de formato sólo existen a 329 px en el
+              material que publica Manfisa (ver `scripts/source-images.mjs`): a media anchura
+              saldrían ampliadas y borrosas, y a un tercio caben sin estirarse. Cuando lleguen
+              los originales grandes, esto se puede volver a abrir. */}
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
             {gallery.map((image, index) => (
-              <Reveal key={image.id} step={index % 2}>
+              <Reveal key={image.id} step={index % 3}>
                 <Media
                   image={image}
                   alt={image.alt[locale]}
-                  sizes="(min-width: 768px) 50vw, 100vw"
+                  sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
                   ratio="4 / 3"
                 />
               </Reveal>
