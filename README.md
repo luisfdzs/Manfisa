@@ -189,6 +189,17 @@ El criterio de indexación está en `lib/site-env.ts` y **no** puede basarse en 
 proyecto de test despliega su rama como su propia "production", así que allí `VERCEL_ENV` es
 `production` también. Se decide por `VERCEL_GIT_COMMIT_REF === 'main'`, y falla del lado seguro.
 
+### 🔒 Candado de indexación: `SITE_INDEXABLE`
+
+Las tres ramas están alineadas, así que la web **también vive en `main`** — pero cumplir la condición
+de rama ya no basta: hace falta además `SITE_INDEXABLE=true` en el entorno. Sin esa variable, ni
+siquiera producción se indexa.
+
+Está para que alinear ramas no publique en Google especificaciones técnicas sin confirmar a nombre de
+una empresa real. **Quitar el candado es la última tarea antes de salir a producción**, y se hace en
+un sitio, sin tocar código: Vercel › proyecto `manfisa` › Settings › Environment Variables ›
+`SITE_INDEXABLE=true` (entorno Production).
+
 El framework se declara en **`vercel.json`** (`"framework": "nextjs"`), que se versiona y se
 aplica igual a los dos entornos.
 
