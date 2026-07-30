@@ -68,6 +68,23 @@ borra sin comprobar nada.
   ramas de código — y de hecho el `.gitignore` de la rama de código los ignora, para que no se
   cuelen por descuido. Para trabajar con el contexto disponible mientras se programa, un
   **worktree** dedicado: `git worktree add ../manfisa-claude claude`.
+
+### ⚠️ TRAMPA: el ciclo de worktree deja el árbol principal en `main`
+
+Comprobado **dos veces** el 2026-07-30: tras un ciclo
+`git worktree add ../manfisa-claude claude` … `git worktree remove ../manfisa-claude`, el **árbol de
+trabajo principal aparece en `main`**, no en la rama en la que estabas. Y como en `main` sólo hay el
+README, **el código desaparece del disco** y parece que se ha perdido algo grave.
+
+No se pierde nada: está en `origin/test`. La receta, siempre, al terminar de tocar el contexto:
+
+```bash
+git checkout test
+git diff --stat HEAD origin/test    # vacío = el árbol está intacto
+```
+
+Por eso conviene **dejar el worktree del contexto puesto** en vez de crearlo y borrarlo cada vez: el
+ciclo es lo que muerde.
 - **Claude siempre toma el contexto desde esta rama.**
 
 ## Flujo de trabajo por cambio
