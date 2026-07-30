@@ -44,19 +44,26 @@ La web está **completa a nivel técnico**, pero parte del contenido son valores
 sector, **no datos facilitados por Manfisa**. Están marcados uno por uno en la cabecera de
 `scripts/migration/content-snapshot.mjs`. En resumen:
 
-**Verificado** (manfisa.com, Informa D&B, Asociación Española del Aluminio): razón social y
-estructura del grupo, dirección, CP, teléfono, fax, email y coordenadas, fundación en 1973,
-Dalian Manfisa (2008), actividades, energía 100 % renovable y planta fotovoltaica.
+**Verificado** (manfisa.com, Informa D&B, Empresia, Infonif y el **BORME-C-2020-7534**, que es el
+anuncio oficial de la segregación): CIF y fecha de constitución de la matriz (A31038839,
+16/04/1973), la estructura societaria completa del grupo, plantilla (**46 personas**), facturación
+(**> 30 M€**), dirección, CP, teléfono, fax, email y coordenadas, Dalian Manfisa (2008), los
+**siete huertos solares** de Maizurgui Renovables y la energía 100 % renovable.
 
 **Pendiente de validar por Manfisa:**
 
 1. **Tablas de aleaciones** — designaciones, purezas, resistencias, alargamientos y diámetros.
 2. **Formatos de suministro** — pesos de bobina y embalajes.
-3. **Cifras** — capacidad instalada y facturación.
+3. **Capacidad instalada** — las 3.500 t son la cifra que publica Electrolead, puesta como orden
+   de magnitud. No es un dato de Manfisa.
 4. **Certificaciones** — números y alcances de ISO 9001 / ISO 14001.
 5. **Logotipo** — el wordmark y el favicon son un montaje tipográfico provisional
    (`components/layout/Wordmark.tsx`, `scripts/generate-brand-assets.mjs`).
 6. **Fotografía** — el catálogo usa imágenes provisionales generadas, marcadas como tales.
+
+No se ha inventado **ningún CIF** de las sociedades cuyo identificador no es público (el de Manfisa
+Wire, entre ellos): un identificador oficial falso no es lo mismo que una especificación técnica
+plausible, así que la web no muestra ninguno.
 
 Hasta que 1-4 estén confirmados, la web debe quedarse en **test** (que emite `noindex`
 automáticamente). Publicar una tabla de aleaciones inventada en una web industrial es peor que
@@ -97,14 +104,20 @@ estética con un titular gigante.
 Ya está hecho: proyecto de Sanity **`65pypeao`**, dataset `production`, orígenes CORS dados de
 alta para localhost y los tres dominios, y contenido inicial importado. Lo que queda:
 
-1. En sanity.io/manage › API › Webhooks, un webhook a `/api/revalidate` con el valor de
-   `SANITY_REVALIDATE_SECRET`. Dataset `production`, triggers create/update/delete.
+1. **El webhook de revalidación, a mano** en sanity.io/manage › API › Webhooks: URL
+   `https://manfisatest.vercel.app/api/revalidate`, dataset `production`, triggers
+   create/update/delete, y el **secreto** de `SANITY_REVALIDATE_SECRET` (está en `.env.local`).
+   No se puede automatizar: `sanity hooks create` es interactivo, y el endpoint de la Management
+   API que responde para este proyecto es el **antiguo, que no acepta `secret`** — un hook creado
+   así fallaría la verificación de firma de `parseBody` y devolvería 401 en cada publicación, o
+   sea, peor que no tenerlo.
 2. Invitar a quien vaya a editar en sanity.io/manage › Members.
 
-Los dos proyectos de Vercel (`manfisa` y `manfisatest`) también están creados, conectados al repo y
-con las tres variables puestas en los tres entornos. **Queda un ajuste manual que el CLI no puede
-hacer:** poner **`test` como Production Branch de `manfisatest`** (Settings › Git › Production
-Branch). Sin eso los dos entornos publicarían `main`, es decir, lo mismo.
+Los dos proyectos de Vercel (`manfisa` y `manfisatest`) están creados, conectados al repo, con las
+tres variables en los tres entornos y con la **Production Branch ya correcta** (`main` y `test`
+respectivamente). Ese ajuste tampoco lo expone el CLI, pero sí la API:
+`PATCH /v9/projects/{id}/branch` con `{"branch":"test"}` — no `PATCH /v9/projects/{id}`, que
+rechaza tanto `link` como `productionBranch` como propiedades no permitidas.
 
 ## Arquitectura
 
