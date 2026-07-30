@@ -16,11 +16,29 @@
  *   desarrollo local (sin variables)     → NO indexable
  *
  * Falla del lado seguro: si mañana falta la variable, no se indexa.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * INTERRUPTOR EXPLÍCITO: `SITE_INDEXABLE`
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Cumplir la condición de rama ya no basta: hace falta además que
+ * `SITE_INDEXABLE` valga `'true'` en el entorno.
+ *
+ * Está porque la web vive en `main` **antes** de que Manfisa haya validado las tablas de
+ * aleaciones, la capacidad instalada y las certificaciones (ver la memoria
+ * `pendientes-manfisa`). Sin este interruptor, el simple hecho de alinear las ramas
+ * publicaría en Google especificaciones técnicas sin confirmar a nombre de una empresa
+ * real — y un comprador que pida una aleación anunciada que no se fabrica no vuelve.
+ *
+ * Es un candado deliberado, no un residuo: **quitarlo es la última tarea antes de salir a
+ * producción**, y se hace en un sitio (Vercel › proyecto `manfisa` › Settings ›
+ * Environment Variables › `SITE_INDEXABLE=true`, entorno Production) sin tocar código.
+ * Mientras no exista la variable, no se indexa nada.
  */
 export const INDEXABLE_BRANCH = 'main'
 
 export function isIndexable(): boolean {
   return (
+    process.env.SITE_INDEXABLE === 'true' &&
     process.env.VERCEL_ENV === 'production' &&
     process.env.VERCEL_GIT_COMMIT_REF === INDEXABLE_BRANCH
   )
