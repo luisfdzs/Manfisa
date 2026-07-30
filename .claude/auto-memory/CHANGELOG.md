@@ -2,6 +2,25 @@
 
 Historial automático del proyecto. Fecha en formato `AAAA-MM-DD`.
 
+## 2026-07-30 (imágenes) — Claude
+
+**Fotografía real y mosaico de portada.**
+
+- **Fuera las imágenes provisionales.** Las 18 fotos salen ahora de **manfisa.com** (producto real,
+  sin problema de licencia). Nuevo `scripts/source-images.mjs` declara qué foto va en cada sitio con
+  su alt en tres idiomas, y `npm run images` las descarga y prepara. Se retiró
+  `generate-placeholders.mjs`.
+- **Se buscó stock libre y se descartó**, con motivo: lo relevante en Commons/Openverse estaba en
+  CC BY-SA (atribución + share-alike sobre una web corporativa) y Unsplash/Pexels exigen clave de
+  API. Detalle en la nueva memoria `imagenes-y-hero`.
+- **Hero nuevo:** mosaico de 12×6 con piezas desiguales y movimiento lento, editable desde el panel
+  (campo `heroMontage`, 3-8 imágenes). **Sin vídeo, a propósito**: mismo efecto con CSS, cero peso
+  contra el LCP, sin autoplay en móvil y sin subir originales a un tercero.
+- **Limitación documentada:** varias fotos de formato sólo existen a 329 px en su web. Ninguna se
+  usa como portada y la galería pasó a tres columnas para no ampliarlas.
+- Verificado 26/26 en local y en **los dos entornos desplegados**. Las tres ramas de código
+  alineadas otra vez; la rama de trabajo y su worktree, borrados.
+
 ## 2026-07-30 (cierre) — Claude
 
 **Ramas alineadas, candado de indexación y los dos webhooks.**

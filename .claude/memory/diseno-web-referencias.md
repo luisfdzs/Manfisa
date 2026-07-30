@@ -58,8 +58,12 @@ se resuelve con `:last-child`, que es la única celda que de verdad no tiene vec
 
 ## Bloques con carácter
 
-- **Hero** a pantalla completa con la portada de la primera línea destacada, y **dos velos** (ver
-  [[arquitectura-web]] para por qué son dos).
+- **Hero: mosaico de fotografía de planta con movimiento lento**, al modo del hero de sanity.io
+  pero con material propio. Rejilla de 12×6 con piezas **deliberadamente desiguales** (una
+  dominante y cuatro satélites): una cuadrícula regular se lee como galería de banco de imágenes;
+  lo que da vida a un mosaico es que ninguna pieza mida lo mismo que su vecina. En móvil se cae a
+  tres piezas — a 390 px, seis fotos son seis manchas. Lleva **tres velos** (ver
+  [[arquitectura-web]]) y se edita desde el panel. Detalle en [[imagenes-y-hero]].
 - **Banda de cifras** sobre fondo `inverse`: el único bloque que interrumpe la lectura a propósito.
   En B2B la capacidad y los años de fábrica deciden si te piden muestra, y se leen de un vistazo o
   no se leen. Entre dos y seis cifras: menos y más grandes se leen mejor que una parrilla de doce.

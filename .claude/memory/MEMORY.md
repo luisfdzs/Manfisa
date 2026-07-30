@@ -9,6 +9,7 @@ archivo `.md`, nunca aquí.
 - [Arquitectura de la web](arquitectura-web.md) — stack (Next.js 16 + TS + Tailwind 4), patrones (puerta única, estático primero, tokens, `<Media>`, `spec-table`)
 - [Panel de administración](panel-administracion.md) — Sanity en `/admin`: proyecto `65pypeao`, modelo de contenido y qué puede editar Manfisa
 - [Webhook de revalidación](panel-administracion-webhook.md) — creado y verificado (10 s de publicar a ver); cómo leer el log de entregas y el error de medirlo en la página equivocada
+- [Imágenes y hero](imagenes-y-hero.md) — todas las fotos son de manfisa.com; por qué se descartó el stock libre, la limitación de 329 px y por qué el hero se anima con CSS y no con vídeo
 - [Diseño web y referencias](diseno-web-referencias.md) — lenguaje visual «aluminio»: tokens, tipografía técnica, tablas como ficha impresa
 - [Despliegue en Vercel](despliegue-vercel.md) — dos proyectos (prod ← `main`, test ← `test`) y por qué la indexación no puede depender de `VERCEL_ENV`
 - [Verificación y despliegue](verificacion-y-despliegue.md) — `check:mobile` obligatorio en interfaz; los fallos reales que ya ha cazado
