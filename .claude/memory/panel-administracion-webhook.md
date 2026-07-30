@@ -1,20 +1,45 @@
 ---
 name: panel-administracion-webhook
-description: El webhook de revalidación de Sanity hay que crearlo a mano en el panel — por qué no se puede automatizar ni con el CLI ni con la Management API
+description: El webhook de revalidación (creado y verificado, 10 s de publicar a ver) — por qué hubo que crearlo a mano y cómo se comprueba que funciona de verdad
 metadata:
   type: project
 ---
 
-El webhook que avisa a `/api/revalidate` al publicar **no está creado**, y hay que hacerlo a mano en
-**sanity.io/manage › API › Webhooks**:
+**Creado y funcionando (2026-07-30).** Al publicar en `/admin`, el cambio se ve en la web en **unos
+10 segundos**, sin desplegar nada. Configuración, en sanity.io/manage › API › Webhooks:
 
-| Campo    | Valor                                                |
-| -------- | ---------------------------------------------------- |
-| URL      | `https://manfisatest.vercel.app/api/revalidate`      |
-| Dataset  | `production`                                         |
-| Trigger  | create · update · delete                             |
-| Método   | POST                                                 |
-| Secret   | el de `SANITY_REVALIDATE_SECRET` (está en `.env.local`) |
+| Campo       | Valor                                                   |
+| ----------- | ------------------------------------------------------- |
+| Nombre / id | `revalidate-test` / `MAmWRdflnd5sR8vn`                  |
+| URL         | `https://manfisatest.vercel.app/api/revalidate`         |
+| Dataset     | `production`                                            |
+| Trigger     | create · update · delete                                |
+| Método      | POST · API version `v2021-03-25` · sin borradores       |
+| Secret      | el de `SANITY_REVALIDATE_SECRET` (está en `.env.local`) |
+
+⚠️ **Falta el de producción.** Cuando `main` reciba la web, hay que crear el gemelo apuntando al
+dominio real. El plan admite 2 webhooks.
+
+## Cómo comprobar que funciona (y el error que casi lo da por roto)
+
+El log de entregas está en la API, no sólo en el panel:
+
+```
+GET https://api.sanity.io/v2021-10-04/hooks/projects/65pypeao/{hookId}/attempts
+```
+
+Devuelve `resultCode` y `resultBody` de cada entrega. Lo bueno es ver
+`200` con `{"revalidated":true,"tag":"sanity-content"}`. Un **401** ahí significa que el secreto del
+panel y el de `.env.local` no coinciden.
+
+**El error que costó un rato:** la primera prueba de extremo a extremo pareció fallar (100 segundos
+sin propagarse) y en realidad el webhook estaba entregando `200` desde el principio. El fallo era de
+la prueba: se buscaba el texto del `claim` en `/es/company`, y **el `claim` sale en el Hero de la
+PORTADA**; la página Empresa muestra `statement`. Moraleja: antes de declarar roto el webhook,
+mirar `attempts` — si ahí hay 200, el problema está en lo que se está midiendo.
+
+Para probarlo sin tocar contenido de verdad: modificar un campo, verificarlo en la página **donde ese
+campo se pinta**, y revertirlo. El script usado está en el scratchpad de la sesión.
 
 ## Por qué no se puede automatizar (comprobado 2026-07-30)
 
@@ -34,10 +59,10 @@ publicación recibiría un **401** y la web no se regeneraría — con el añadi
 webhook aparecería en verde como «creado». Un fallo silencioso a cambio de ahorrar treinta segundos
 de formulario.
 
-## Mientras no exista
+## Si algún día se desactiva
 
-La web es estática y se construye leyendo Sanity, así que **el contenido publicado no aparece hasta
-que hay un despliegue nuevo**. Para forzarlo: un push a `test` (o un redeploy desde Vercel). Es
-exactamente lo que el webhook viene a evitar, y la razón por la que conviene crearlo pronto.
+La web es estática y se construye leyendo Sanity, así que sin webhook **el contenido publicado no
+aparece hasta que hay un despliegue nuevo**. Para forzarlo: un push a `test` o un redeploy desde
+Vercel.
 
 Relacionado: [[panel-administracion]], [[despliegue-vercel]], [[seguridad-secretos]].

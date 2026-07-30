@@ -20,10 +20,15 @@ Historial automático del proyecto. Fecha en formato `AAAA-MM-DD`.
   de que `POST …/link` devuelve 200 e ignora el campo.
 - **Rama `claude` creada y subida** con `git worktree add --orphan`, en un worktree aparte para no
   tocar el árbol de código.
-- **El webhook de revalidación NO se pudo automatizar** y queda pendiente a mano. Nueva memoria
-  `panel-administracion-webhook` con el porqué: el CLI es interactivo y la Management API que
-  responde es la antigua, que rechaza `secret` — y un hook sin secreto daría 401 en cada publicación
-  mostrándose en verde en el panel.
+- **Webhook de revalidación creado y VERIFICADO.** No se pudo automatizar (el CLI es interactivo y la
+  Management API que responde es la antigua, que rechaza `secret`), así que se rellenó el formulario
+  del panel con el navegador; el campo del secreto lo pegó el usuario. Probado de extremo a extremo:
+  publicar → **10 segundos** → visible en la web, y revertido igual. Nueva memoria
+  `panel-administracion-webhook`.
+- **Falso negativo en esa prueba, digno de recordar:** la primera pasada dio «no se propaga» tras 100
+  segundos y el webhook llevaba todo el rato devolviendo `200`. Se estaba buscando el `claim` en
+  `/es/company`, y el `claim` se pinta en el Hero de la **portada**. El log de entregas
+  (`…/hooks/projects/{p}/{hookId}/attempts`) lo dejó claro en una consulta.
 - **Incidencia:** el árbol de trabajo apareció en `main` a mitad de sesión (código borrado del
   disco). Se recuperó con `git checkout test`; nada se perdió porque ya estaba en `origin/test`.
 
