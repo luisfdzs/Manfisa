@@ -1,0 +1,4 @@
+# Finales de línea normalizados a LF, igual que en la rama de código. Sin esto, en
+# Windows cada checkout convierte el contexto a CRLF y los diffs de las memorias salen
+# enteros como cambiados aunque nadie haya tocado una línea.
+* text=auto eol=lf

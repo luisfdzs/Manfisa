@@ -1,0 +1,28 @@
+---
+name: sistema-contexto
+description: Cómo funciona el sistema de contexto local — .claude/memory, auto-memory, skills, settings
+metadata:
+  type: project
+---
+
+Todo el contexto de Claude para este proyecto vive **a nivel local** dentro de `.claude/`, y se
+versiona en la **rama huérfana `claude`** (ver [[flujo-git-y-ramas]]). Nada se guarda en el
+directorio global de usuario.
+
+Estructura:
+
+- **`.claude/settings.local.json`** — declara `memorydirectory` → `.claude/memory` y
+  `automemorydirectory` → `.claude/auto-memory`. Cualquier MCP/skill/setting nuevo se añade aquí.
+- **`.claude/memory/`** — memorias normales (curadas, estables). Índice: `MEMORY.md`. Una memoria por
+  archivo, con frontmatter (`name`, `description`, `metadata.type`).
+- **`.claude/auto-memory/`** — auto-memorias generadas automáticamente: `INDEX.md`, `CHANGELOG.md` y
+  `session-*.md` (registro por sesión con progreso y decisiones).
+- **`.claude/skills/`** — skills locales del proyecto. Actualmente: `retomar` (`/retomar`).
+
+**`CLAUDE.md` importa `MEMORY.md` con `@.claude/memory/MEMORY.md`**, así que el índice de memorias
+entra en contexto al empezar cada sesión sin tener que pedirlo.
+
+La skill `/retomar` es la vía de recuperación de contexto: lee `CLAUDE.md`, las memorias y el
+changelog para reconstruir el estado.
+
+Reglas de mantenimiento en [[convenciones-mantenimiento]].

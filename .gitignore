@@ -1,0 +1,50 @@
+# === MANFISA · rama `claude` (contexto) — .gitignore ===
+#
+# Esta rama es huérfana y sólo contiene contexto: CLAUDE.md y .claude/. Aquí `.claude/`
+# SÍ se versiona (al contrario que en las ramas de código, donde está ignorado a
+# propósito para que no se cuele en un commit de código).
+#
+# REGLA DE SEGURIDAD: nunca se sincronizan credenciales, keys, API keys, tokens de MCP
+# ni variables de entorno. Al añadir un secreto nuevo, incluirlo aquí ANTES de subir.
+
+# --- Secretos y variables de entorno ---
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+credentials.json
+secrets.json
+service-account*.json
+*.secret
+*.secrets
+*_secret*
+*apikey*
+*api-key*
+*.token
+*token*.json
+
+# --- Códigos de recuperación ---
+recovery-codes.txt
+*recovery-code*
+*recovery-codes*
+
+# --- MCPs con tokens / credenciales ---
+.mcp.local.json
+mcp.local.json
+**/mcp-credentials*.json
+
+# --- Sistema operativo ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# --- Nada de código ni dependencias en esta rama ---
+node_modules/
+.next/
+.vercel
