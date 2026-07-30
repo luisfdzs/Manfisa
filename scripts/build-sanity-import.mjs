@@ -42,8 +42,21 @@ import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { company, productLines, quality } from './migration/content-snapshot.mjs'
+import { GALLERIES, MONTAGE, slugify } from './source-images.mjs'
 
 const OUT = path.join(import.meta.dirname, 'migration', 'import.ndjson')
+
+/**
+ * Convierte una entrada del catálogo de imágenes en un `plantImage` listo para importar.
+ * Los ficheros los deja `npm run images` en `migration/media/`; si falta alguno, el
+ * importador aborta con el nombre concreto, que es justo lo que se quiere saber.
+ */
+const image = (entry, index) => ({
+  _key: `image${index}`,
+  _type: 'plantImage',
+  asset: { _type: 'image', _sanityAsset: `image@file://./media/${slugify(entry.file)}.webp` },
+  alt: { _type: 'localizedString', ...entry.alt },
+})
 
 /** Rango lexicográfico creciente, compatible con el que usa @sanity/orderable-document-list. */
 const rank = (index) => `0|${String(index).padStart(6, '0')}:`
@@ -85,21 +98,9 @@ productLines.forEach((line, index) => {
       weight: format.weight,
       packaging: str(format.packaging),
     })),
-    images: [
-      {
-        _key: 'image0',
-        _type: 'plantImage',
-        asset: {
-          _type: 'image',
-          _sanityAsset: `image@file://./placeholders/${line.slug}.jpg`,
-        },
-        alt: str({
-          es: `Imagen provisional de la línea ${line.title.es}`,
-          en: `Placeholder image for the ${line.title.en} line`,
-          fr: `Image provisoire de la ligne ${line.title.fr}`,
-        }),
-      },
-    ],
+    // La galería de cada línea se toma por FAMILIA, no por slug: si mañana se renombra una
+    // línea, las fotos la siguen. La primera de la lista es la portada.
+    images: (GALLERIES[line.family] ?? []).map(image),
     orderRank: rank(index),
   })
 })
@@ -108,6 +109,7 @@ documents.push({
   _id: 'companyInfo',
   _type: 'companyInfo',
   claim: str(company.claim),
+  heroMontage: MONTAGE.map(image),
   statement: par(company.statement),
   values: list(company.values),
   figures: keyed(company.figures, 'figure', (figure) => ({
