@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 import { Media } from '@/components/ui/Media'
+import { cn } from '@/lib/cn'
 import type { Company, ProductLine } from '@/lib/content'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/dictionaries'
@@ -13,57 +15,113 @@ type Props = {
 }
 
 /**
- * Apertura a pantalla completa con la portada de la primera línea destacada.
+ * Colocación de las piezas del mosaico sobre una rejilla de 12×6.
  *
- * `data-hero` no es decoración: es la marca que lee `globals.css` con `:has()` para poner
- * la cabecera en color metal mientras no se ha hecho scroll. Sin ese atributo, el menú
- * saldría en grafito sobre una foto oscura.
+ * Son deliberadamente **desiguales**: una pieza dominante y cinco satélites de tamaños
+ * distintos. Una cuadrícula regular se lee como una galería de banco de imágenes; lo que hace
+ * que un mosaico parezca vivo es que ninguna pieza mida lo mismo que su vecina.
  *
- * La altura usa `svh` y no `vh` para que en móvil no la corte la barra del navegador.
+ * `hiddenBelowMd` marca las que desaparecen en móvil: a 390 px de ancho, seis fotos son seis
+ * manchas. Se quedan las tres primeras, que son las buenas.
+ */
+type Tile = {
+  colSpan: number
+  rowSpan: number
+  col: number
+  row: number
+  sizes: string
+  /** Se oculta por debajo de `md`. Sin el tipo explícito, `as const` haría que las piezas
+   *  que no declaran el campo no lo admitan siquiera al leerlo. */
+  hiddenBelowMd?: boolean
+}
+
+const TILES: readonly Tile[] = [
+  { colSpan: 7, rowSpan: 4, col: 1, row: 1, sizes: '(min-width: 768px) 58vw, 100vw' },
+  { colSpan: 5, rowSpan: 3, col: 8, row: 1, sizes: '(min-width: 768px) 42vw, 100vw' },
+  { colSpan: 7, rowSpan: 2, col: 1, row: 5, sizes: '(min-width: 768px) 58vw, 100vw' },
+  { colSpan: 2, rowSpan: 3, col: 8, row: 4, sizes: '17vw', hiddenBelowMd: true },
+  { colSpan: 3, rowSpan: 3, col: 10, row: 4, sizes: '25vw', hiddenBelowMd: true },
+]
+
+/**
+ * Apertura de la web: un mosaico de fotografía de planta con movimiento lento, al modo del
+ * hero de sanity.io pero con material propio de Manfisa.
+ *
+ * **No hay vídeo, y es a propósito.** Un hero en vídeo son megabytes que compiten
+ * directamente con el LCP, y en móvil el autoplay es un campo de minas. El movimiento se hace
+ * con un zoom lento por CSS (utilidad `montage-tile` en globals.css) sobre imágenes que de
+ * todos modos hay que descargar: mismo efecto percibido, cero peso añadido, y el mosaico lo
+ * cambia cualquiera desde el panel porque son sólo imágenes.
+ *
+ * `data-hero` no es decoración: lo lee `globals.css` con `:has()` para poner la cabecera en
+ * color metal mientras no se ha hecho scroll.
+ *
+ * El margen negativo mete el mosaico bajo la barra: `<header>` es `sticky` y **ocupa su sitio
+ * en el flujo**, así que sin esto el hero empezaría 80 px más abajo y el menú quedaría metal
+ * sobre metal, es decir invisible. Los valores tienen que coincidir con la altura de la barra
+ * en `Header.tsx` (h-20 / h-24 en md).
  */
 export function Hero({ line, company, locale, dictionary }: Props) {
+  // El mosaico manda; si el panel se quedara sin imágenes, se cae con elegancia a la portada
+  // de la primera línea destacada, que siempre existe.
+  const images = company.heroMontage.length > 0 ? company.heroMontage : [line.cover]
+  const tiles = TILES.slice(0, Math.min(Math.max(images.length, 3), TILES.length))
+
   return (
-    /* El margen negativo NO es un truco de maquetación: es lo que hace que la cabecera
-       transparente funcione. `<header>` es `sticky top-0`, y un elemento sticky **ocupa su
-       sitio en el flujo**, así que sin esto el hero empieza 80 px por debajo y el menú —que
-       mientras no se hace scroll se pinta en color metal— queda metal sobre metal, es decir,
-       invisible. Subir el hero esos mismos 80/96 px lo mete debajo de la barra, que es donde
-       el diseño da por supuesto que está la foto.
-
-       Los valores tienen que coincidir con la altura de la barra en `Header.tsx` (h-20 / h-24
-       en md). Si allí cambia, aquí también. */
-    <section data-hero className="relative -mt-20 flex min-h-svh flex-col justify-end md:-mt-24">
-      <div className="absolute inset-0">
-        {/* La ÚNICA imagen con `priority` de toda la página: es el LCP. */}
-        <Media
-          image={line.cover}
-          alt={line.cover.alt[locale]}
-          sizes="100vw"
-          priority
-          quality={82}
-          ratio="auto"
-          className="h-full"
-        />
-        {/* DOS velos, no uno, y cada uno protege un texto distinto.
-
-            El de abajo es para el titular. El de ARRIBA es para la cabecera, y hace falta
-            porque mientras no se ha hecho scroll el menú se pinta en color metal sobre la
-            foto (ver `:has()` en globals.css): con una imagen clara en la parte superior
-            —una nave iluminada, un cielo, una bobina pulida— el logotipo y los cinco
-            enlaces del menú desaparecen. Pasó con la primera imagen que se subió, y a
-            1440 px no se notaba enseguida porque el ojo ya sabe dónde está el menú.
-
-            Sale más barato garantizar el contraste aquí que pedir que todas las fotos de
-            planta sean oscuras por arriba: quien sube la foto no tiene por qué saberlo. */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-inverse/70 to-transparent"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-inverse/85 via-inverse/35 to-transparent"
-        />
+    <section
+      data-hero
+      className="relative -mt-20 flex min-h-svh flex-col justify-end overflow-hidden md:-mt-24"
+    >
+      <div aria-hidden className="absolute inset-0 grid grid-cols-12 grid-rows-6 gap-1.5 p-1.5">
+        {tiles.map((tile, index) => {
+          const image = images[index % images.length]!
+          return (
+            <div
+              key={`${image.id}-${index}`}
+              className={cn('montage-tile', tile.hiddenBelowMd && 'hidden md:block')}
+              style={
+                {
+                  gridColumn: `${tile.col} / span ${tile.colSpan}`,
+                  gridRow: `${tile.row} / span ${tile.rowSpan}`,
+                  // Escalonado: cada pieza entra un poco después y deriva a distinto ritmo,
+                  // para que el conjunto nunca lata al unísono.
+                  animationDelay: `${index * 110}ms`,
+                  '--drift': `${22 + index * 4}s`,
+                } as CSSProperties
+              }
+            >
+              <Media
+                image={image}
+                // Decorativa: el mosaico vive dentro de un contenedor `aria-hidden`, y quien
+                // usa lector de pantalla necesita el titular, no seis descripciones de foto.
+                alt=""
+                sizes={tile.sizes}
+                // Sólo la pieza dominante es prioritaria: es el LCP de la página.
+                priority={index === 0}
+                quality={index === 0 ? 82 : 75}
+                ratio="auto"
+                className="h-full"
+              />
+            </div>
+          )
+        })}
       </div>
+
+      {/* Tres velos, y cada uno hace un trabajo distinto:
+          1. uno general, porque un mosaico de seis fotos compite con el texto y si no se
+             apaga no gana ninguno de los dos;
+          2. arriba, para la cabecera, que sobre las piezas claras (los bodegones sobre fondo
+             blanco) desaparecería;
+          3. abajo, para que el titular se lea sea cual sea la foto que pongan en el panel. */}
+      <div aria-hidden className="absolute inset-0 bg-inverse/45" />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-inverse/80 to-transparent"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-inverse via-inverse/55 to-transparent"
+      />
 
       <div className="page-gutter relative pb-16 text-metal md:pb-24">
         <p className="eyebrow text-metal/70">{dictionary.products.title}</p>
