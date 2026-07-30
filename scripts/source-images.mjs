@@ -72,6 +72,49 @@ export const MONTAGE = [
       fr: 'Gamme de formats de fil de soudage : bobines, couronnes et fûts',
     },
   },
+  // A partir de aquí, bodegones de producto. En un mosaico de piezas fijas desentonaban;
+  // en el muro en movimiento funcionan, porque lo que se lee es el ritmo del conjunto y no
+  // cada foto por separado. Y hacen falta: con cinco imágenes y cuatro columnas no hay muro.
+  {
+    file: 'S300.jpg',
+    alt: {
+      es: 'Bobina S300 de hilo de aluminio, bobinada capa a capa',
+      en: 'S300 spool of aluminium wire, wound layer by layer',
+      fr: 'Bobine S300 de fil d’aluminium, bobinée couche par couche',
+    },
+  },
+  {
+    file: 'B300-K335.jpg',
+    alt: {
+      es: 'Bobinas B300 y K335, los formatos de mayor capacidad',
+      en: 'B300 and K335 spools, the highest-capacity formats',
+      fr: 'Bobines B300 et K335, les formats de plus grande capacité',
+    },
+  },
+  {
+    file: 'Octavin.jpg',
+    alt: {
+      es: 'Embalaje octogonal Octavin para consumo continuo',
+      en: 'Octavin octagonal pack for continuous feeding',
+      fr: 'Emballage octogonal Octavin pour alimentation continue',
+    },
+  },
+  {
+    file: 'Bidones.jpg',
+    alt: {
+      es: 'Bidones de hilo para inyección en cuchara de acería',
+      en: 'Drums of wire for injection into the steel ladle',
+      fr: 'Fûts de fil pour injection en poche d’aciérie',
+    },
+  },
+  {
+    file: 'Bidon_cubo.jpg',
+    alt: {
+      es: 'Bidón y cubo, los dos envases para hilo de desoxidación',
+      en: 'Drum and pail, the two containers for deoxidation wire',
+      fr: 'Fût et seau, les deux contenants pour fil de désoxydation',
+    },
+  },
 ]
 
 /**
