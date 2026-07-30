@@ -1,0 +1,274 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   MANFISA · Sistema de diseño
+   Los tokens viven aquí y SÓLO aquí. Las utilidades de Tailwind se generan a
+   partir de este @theme, así que no existe forma de usar un color o un espaciado
+   que no esté declarado en el sistema. Regla: si algo no está en esta lista,
+   no se usa en el diseño.
+
+   Dirección: aluminio. Grises fríos de metal laminado, grafito para el texto y
+   UN solo acento —azul acero— reservado a lo que hay que mirar. Nada de degradados
+   ni de sombras: la web de un fabricante de hilo de alta pureza tiene que leerse
+   como una ficha técnica bien impresa, no como una landing.
+   ========================================================================= */
+
+@theme {
+  /* --- Color: aluminio, grafito y un acento. Nada más. ------------------- */
+  --color-metal: #f5f7f8; /* fondo, aluminio muy claro (no blanco puro) */
+  --color-metal-deep: #e7ebee; /* bloques alternos, hovers, huecos de imagen */
+  --color-graphite: #14181b; /* texto principal, casi negro */
+  --color-graphite-soft: #5c666d; /* texto secundario */
+  --color-graphite-faint: #98a2a9; /* metadatos, numeración, unidades */
+  --color-line: #d3d9dd; /* filetes de 1px */
+  --color-inverse: #0d1114; /* secciones oscuras (cifras, pie) */
+  --color-accent: #12657f; /* azul acero: enlaces y datos destacados */
+  --color-accent-soft: #cfe2e8; /* fondo del acento sobre claro */
+
+  /* --- Tipografía: una sans técnica + una mono para los datos ------------ */
+  /* La mono no es decoración: en una tabla de aleaciones las cifras tienen que
+     alinearse por columnas, y eso sólo lo garantiza un ancho fijo. */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Escala fluida: un solo valor por peldaño, sin variantes intermedias.
+     clamp() evita media queries para tipografía y elimina saltos bruscos. */
+  --text-micro: 0.6875rem; /* 11px · etiquetas, unidades, numeración */
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.1em;
+  --text-small: 0.8125rem; /* 13px · metadatos, celdas de tabla */
+  --text-small--line-height: 1.5;
+  --text-body: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  --text-body--line-height: 1.7;
+  --text-lead: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  --text-lead--line-height: 1.5;
+  --text-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.5rem);
+  --text-title--line-height: 1.15;
+  --text-display: clamp(2.125rem, 1.3rem + 3.6vw, 4.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.02em;
+  /* Peldaño propio para las cifras de planta (capacidad, años, toneladas): son
+     el argumento comercial, y a tamaño de titular dejan de ser un dato y pasan
+     a ser una declaración. */
+  --text-figure: clamp(2.5rem, 1.6rem + 3.4vw, 4rem);
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.03em;
+
+  /* --- Ritmo espacial: escala limitada, saltos claros -------------------- */
+  --spacing-gutter: clamp(1.25rem, 4vw, 3.5rem); /* margen lateral de página */
+  --spacing-section: clamp(4rem, 8vw, 9rem); /* aire vertical entre bloques */
+
+  /* --- Movimiento -------------------------------------------------------- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-reveal: reveal 0.8s var(--ease-out-soft) both;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   Base
+   ========================================================================= */
+
+@layer base {
+  /* Cabecera sobre hero a sangre: mientras no se ha hecho scroll, el texto pasa a
+     color metal para tener contraste sobre la foto de planta. Se resuelve con
+     :has() — la cabecera no necesita saber en qué página está, sólo si hay un hero
+     debajo.
+
+     OJO: se aplica sólo a la BARRA (.header-bar), no a todo el <header>. El panel
+     del menú móvil también vive dentro del header pero sobre fondo claro: si
+     heredara este color, saldría blanco sobre blanco. */
+  header[data-top='true'] .header-bar {
+    color: var(--color-graphite);
+  }
+
+  body:has(main > [data-hero]:first-child) header[data-top='true'] .header-bar {
+    color: var(--color-metal);
+    text-shadow: 0 1px 24px rgb(0 0 0 / 0.4);
+  }
+
+  ::selection {
+    background: var(--color-graphite);
+    color: var(--color-metal);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* El header es sticky: los anclajes no deben quedar debajo. */
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--color-metal);
+    color: var(--color-graphite);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Foco visible y coherente en todo el sitio (accesibilidad). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Nadie debería marearse con nuestras animaciones. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================================
+   Utilidades del sistema
+   Sólo patrones que se repiten de verdad. Todo lo demás, utilidades de Tailwind.
+   ========================================================================= */
+
+@utility page-gutter {
+  padding-inline: var(--spacing-gutter);
+}
+
+/* Etiqueta en versalitas: secciones, referencias de aleación, unidades. */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+  letter-spacing: var(--text-micro--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-graphite-faint);
+}
+
+/* Enlace con subrayado que se dibuja al hacer hover. */
+@utility link-underline {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.15em;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-out-soft);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Amplía el área pulsable a los 24 px que exige WCAG 2.2 sin cambiar el diseño:
+   el texto sigue midiendo lo que mide y el subrayado sigue pegado a él; lo que
+   crece es una capa invisible por encima. Imprescindible en los enlaces pequeños
+   (pie, contacto, descargas) cuando se usan con el dedo. */
+@utility tap {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline: -0.25rem;
+    inset-block: -0.4rem;
+  }
+}
+
+/* Aparición al entrar en viewport. La hace CSS con scroll-driven animations
+   cuando el navegador las soporta (cero JS); si no, el contenido se ve fijo. */
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      opacity: 0;
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 20%;
+    }
+  }
+}
+
+/* Tabla de datos técnicos: aleaciones, formatos de suministro, tolerancias.
+   Se declara como utilidad porque el patrón se repite en cada línea de producto y
+   porque las reglas de una tabla legible (cifras en mono, alineación a la derecha,
+   filete sólo entre filas) son fáciles de olvidar una por una. */
+@utility spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+  line-height: var(--text-small--line-height);
+
+  & caption {
+    text-align: left;
+    padding-bottom: 0.75rem;
+    color: var(--color-graphite-soft);
+  }
+
+  & th,
+  & td {
+    padding: 0.75rem 1rem 0.75rem 0;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  & thead th {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--text-micro--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--color-graphite-faint);
+    border-bottom-color: var(--color-graphite);
+  }
+
+  /* Las cifras van en mono y alineadas a la derecha: es lo que permite comparar dos filas
+     de un vistazo sin leerlas dígito a dígito.
+
+     OJO con el `padding-right`: aquí NO se pone a cero. Se intentó, para que la última
+     columna quedara a ras del borde, y el resultado fue que toda columna numérica **seguida
+     de otra** se pegaba a su vecina: se leía «1,50 – 3,00 mmMáxima pureza» y la cabecera
+     «PESOEMBALAJE». Alinear a la derecha acerca el contenido al borde de la celda, así que
+     ahí es donde más falta hace la separación. El borde limpio se resuelve abajo, sólo en la
+     última celda de la fila, que es la que de verdad no tiene vecina. */
+  & td[data-numeric],
+  & th[data-numeric] {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  & th:last-child,
+  & td:last-child {
+    padding-right: 0;
+  }
+}
