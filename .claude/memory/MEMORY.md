@@ -11,6 +11,7 @@ archivo `.md`, nunca aquí.
 - [Webhook de revalidación](panel-administracion-webhook.md) — creado y verificado (10 s de publicar a ver); cómo leer el log de entregas y el error de medirlo en la página equivocada
 - [Imágenes y hero](imagenes-y-hero.md) — todas las fotos son de manfisa.com; por qué se descartó el stock libre, la limitación de 329 px y por qué el hero se anima con CSS y no con vídeo
 - [Diseño web y referencias](diseno-web-referencias.md) — lenguaje visual «aluminio»: tokens, tipografía técnica, tablas como ficha impresa
+- [Límite de despliegues de Vercel](limite-despliegues-vercel.md) — 100/día en el plan gratuito, y aquí se gastan al doble; los push dejan de construir sin avisar
 - [Despliegue en Vercel](despliegue-vercel.md) — dos proyectos (prod ← `main`, test ← `test`) y por qué la indexación no puede depender de `VERCEL_ENV`
 - [Verificación y despliegue](verificacion-y-despliegue.md) — `check:mobile` obligatorio en interfaz; los fallos reales que ya ha cazado
 - [Trampas de la migración a Sanity](trampas-migracion-sanity.md) — el punto en el `_id`, el `file://` del `_sanityAsset` y el `_type` de los objetos

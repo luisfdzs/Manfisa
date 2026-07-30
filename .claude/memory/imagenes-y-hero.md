@@ -44,6 +44,31 @@ También se descartó `cabecera_slider_port_carpeta.jpg` para el mosaico pese a 
 preciosa: lleva **el logotipo «manfisa» incrustado en el pixel** y en una pieza del mosaico sale
 cortado a media palabra, con pinta de error de maquetación.
 
+## El hero es un MURO EN MOVIMIENTO (y el primer intento estaba mal)
+
+⚠️ **Error a no repetir:** el primer hero se construyó «como sanity.io» **sin haber mirado
+sanity.io**. Salió un mosaico de cinco piezas fijas con un zoom tan lento que no se percibía, y
+encima oscurecido al 45 %: un collage apagado. El usuario lo dijo directamente — «no se ve para nada
+como en sanity.io» — y tenía razón.
+
+Lo que hace de verdad ese hero es **desplazar continuamente decenas de paneles distintos**, a
+velocidades distintas, unos entrando y otros saliendo del encuadre. La versión actual reproduce eso:
+
+- **Seis columnas** (cuatro en tablet, dos en móvil), cada una con su velocidad (68-118 s) y
+  **sentidos alternos**. Si todas se movieran igual, el ojo lo lee como una sola imagen
+  desplazándose.
+- **Bucle sin costura**: cada columna repite su contenido dos veces y se desplaza un 50 % exacto, así
+  que el último fotograma es idéntico al primero. Sin eso se ve el salto y se cae todo el efecto.
+- **Relleno mínimo por columna** (`MIN_PANELS_PER_COLUMN = 5`): con doce fotos entre seis columnas
+  tocaban a dos y la columna se quedaba sin paneles a media pasada — aparecía un vacío negro abajo a
+  la derecha.
+- **Rotación −8° y escala 1,42**: al rotar quedan triángulos sin cubrir en dos esquinas; la escala
+  tiene que sobredimensionar lo bastante para sangrar por los cuatro lados. Con 1,18 se veía el hueco.
+- **Velo LATERAL, no general**: denso a la izquierda (donde va el texto) y transparente a la derecha
+  (donde el muro debe lucir). Oscurecer en bloque fue lo que apagó la primera versión. Se probó además
+  bajar el brillo de los paneles y **empeoró**: los bodegones sobre fondo blanco pasaban de parche
+  luminoso a mancha gris.
+
 ## El hero se mueve con CSS, no con vídeo
 
 Se pidió expresamente un hero tipo sanity.io, «mezcla de imágenes y vídeos», con la opción de
