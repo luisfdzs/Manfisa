@@ -35,17 +35,17 @@ export const companyInfo = defineType({
 
     defineField({
       name: 'heroMontage',
-      title: 'Imágenes del mosaico',
+      title: 'Imágenes del muro',
       type: 'array',
       of: [{ type: 'plantImage' }],
       group: 'portada',
-      validation: (rule) => rule.required().min(3).max(8),
+      validation: (rule) => rule.required().min(6).max(20),
       description:
-        'Lo primero que se ve al abrir la web: un mosaico de fotos con movimiento lento. ' +
-        'Entre tres y ocho. La PRIMERA ocupa la pieza grande y es la que más se ve, así que ' +
-        'conviene que sea la más potente y la de mayor resolución; las demás rellenan las ' +
-        'piezas pequeñas. Funciona mejor con fotos de textura (hilo o bobina de cerca) que ' +
-        'con bodegones sobre fondo blanco, que en el mosaico se ven como manchas claras.',
+        'Lo primero que se ve al abrir la web: un muro de fotos que se desplaza sin parar, ' +
+        'repartido en cuatro columnas a distinta velocidad. Cuantas más imágenes, más rico ' +
+        'el muro — con menos de seis se nota que se repiten. La PRIMERA es la que carga con ' +
+        'prioridad, así que conviene que sea la más potente. El orden reparte las fotos en ' +
+        'zigzag entre columnas, de modo que dos parecidas no caigan seguidas.',
     }),
 
     defineField({

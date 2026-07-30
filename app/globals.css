@@ -57,6 +57,7 @@
   /* --- Ritmo espacial: escala limitada, saltos claros -------------------- */
   --spacing-gutter: clamp(1.25rem, 4vw, 3.5rem); /* margen lateral de página */
   --spacing-section: clamp(4rem, 8vw, 9rem); /* aire vertical entre bloques */
+  --spacing-wall-gap: 0.75rem; /* separación entre paneles del muro de portada */
 
   /* --- Movimiento -------------------------------------------------------- */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -83,22 +84,23 @@
    no un montaje que haya que volver a renderizar.
    ========================================================================= */
 
-/* Deriva lenta: acerca y desplaza un poco. `alternate` evita el salto al reiniciar, que
-   es lo que delata que algo está en bucle. */
-@keyframes montage-drift {
+/* Desplazamiento continuo de una columna. El truco de la costura: la columna contiene su
+   contenido DOS veces y se desplaza exactamente un 50 %, así que al reiniciar el fotograma
+   final y el inicial son idénticos y el bucle no se ve. */
+@keyframes wall-scroll {
   from {
-    transform: scale(1.04) translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: scale(1.16) translate3d(-1.5%, -1.5%, 0);
+    transform: translate3d(0, -50%, 0);
   }
 }
 
-/* Entrada escalonada de cada pieza al cargar. */
-@keyframes montage-in {
+/* Entrada del muro completo al cargar: sube y se revela. */
+@keyframes wall-in {
   from {
     opacity: 0;
-    transform: translateY(1.5rem) scale(0.98);
+    transform: scale(1.06);
   }
   to {
     opacity: 1;
@@ -106,26 +108,28 @@
   }
 }
 
-@utility montage-tile {
-  position: relative;
-  overflow: hidden;
-  background-color: var(--color-inverse);
-  animation: montage-in 1s var(--ease-out-soft) both;
+@utility wall {
+  animation: wall-in 1.4s var(--ease-out-soft) both;
 
-  /* `--drift` lo fija cada pieza para que no deriven todas al mismo ritmo. Se hereda desde
-     el contenedor, así que el componente no necesita tocar la imagen. */
-  & img {
-    animation: montage-drift var(--drift, 26s) ease-in-out infinite alternate;
-    will-change: transform;
-  }
-
-  /* Sin movimiento si el sistema lo pide: la foto se queda quieta y ya está. */
   @media (prefers-reduced-motion: reduce) {
     animation: none;
+  }
+}
 
-    & img {
-      animation: none;
-    }
+/* Una columna del muro. `--speed` y `--dir` los fija cada columna: velocidades distintas y
+   sentidos alternos son lo que convierte una rejilla en un muro vivo — si todas se mueven
+   igual, el ojo lo lee como una sola imagen desplazándose. */
+@utility wall-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-wall-gap);
+  animation: wall-scroll var(--speed, 60s) linear infinite;
+  animation-direction: var(--dir, normal);
+  will-change: transform;
+
+  /* Sin movimiento si el sistema lo pide: el muro se queda quieto y sigue componiendo. */
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 }
 
