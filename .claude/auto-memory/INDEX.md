@@ -11,9 +11,14 @@ prerrenderizadas**. Panel de Sanity creado (**`65pypeao`**) con el contenido ini
 **Desplegado y verificado en real:** el código está en `origin/test` (commit de merge `2c8dc01`) y
 **https://manfisatest.vercel.app** pasa **26/26** en `check:mobile`.
 
-**Infraestructura terminada:** rama `claude` publicada, Production Branch correctas (`manfisa` →
-`main`, `manfisatest` → `test`), la rama `claude` ya no despliega, y el **webhook de revalidación
-creado y verificado de extremo a extremo: 10 segundos** de publicar a verse.
+**Infraestructura terminada.** Las **cuatro ramas alineadas** (`main`, `develop`, `test` con el mismo
+árbol; `claude` con el contexto), Production Branch correctas, la rama `claude` ya no despliega, y
+**los dos webhooks de revalidación** creados y verificados: **10 segundos** de publicar a verse, en
+producción y en test.
+
+**La web está en `main` y desplegada, pero NO indexable:** `isIndexable()` exige además
+`SITE_INDEXABLE=true`, que está a `false` explícitamente en los dos proyectos. Levantar ese candado es
+la última tarea antes de salir. Ver `despliegue-vercel`.
 
 **Cabos sueltos:**
 
@@ -22,10 +27,7 @@ creado y verificado de extremo a extremo: 10 segundos** de publicar a verse.
    único bloqueo de verdad. Ver `pendientes-manfisa`.
 2. **`develop` arrastra el código de la web.** Se creó desde `test` y el `reset --hard` + force push
    para devolverla a `main` quedó bloqueado por política. No despliega nada, así que no corre prisa.
-3. **Falta el webhook de producción**, para cuando `main` reciba la web (el plan admite 2).
-4. Falta **invitar a quien vaya a editar** en sanity.io/manage › Members.
-5. `manfisa.vercel.app` sirve un build de `test` (primer despliegue de un proyecto nuevo). Sale
-   `noindex` y se resolverá al promocionar a `main`. Ver `despliegue-vercel`.
+3. Falta **invitar a quien vaya a editar** en sanity.io/manage › Members.
 
 **Siguiente paso:** mandar a Manfisa la lista de datos por confirmar. El resto está listo.
 

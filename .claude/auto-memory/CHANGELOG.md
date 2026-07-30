@@ -2,6 +2,29 @@
 
 Historial automático del proyecto. Fecha en formato `AAAA-MM-DD`.
 
+## 2026-07-30 (cierre) — Claude
+
+**Ramas alineadas, candado de indexación y los dos webhooks.**
+
+- **Las cuatro ramas al día.** `test` → `develop` → `main` con `merge --no-ff` (sin squash). No hizo
+  falta force-push: las dos promociones eran fast-forward. Las tres ramas de código comparten árbol.
+- **Candado `SITE_INDEXABLE`.** Al vivir la web en `main`, la condición de rama por sí sola habría
+  publicado en Google tablas de aleaciones sin validar a nombre de una empresa real. `isIndexable()`
+  exige ahora también la variable, puesta a `false` **explícitamente** en los dos proyectos y los tres
+  entornos. Verificado con `main` ya en producción: `noindex, nofollow` y `Disallow: /`. 26/26 en los
+  dos entornos.
+- **Webhook de producción creado por API** (`revalidate-prod`), sin formulario. Los dos verificados de
+  extremo a extremo: **10 s** de publicar a verse, y contenido de prueba revertido.
+- **Corregida una conclusión falsa de la sesión anterior:** se había dado por imposible crear webhooks
+  con secreto por la Management API. Sí se puede — `on` va anidado en `rule`, y los rechazos campo a
+  campo hacían parecer el esquema mucho más pobre. Documentado en `panel-administracion-webhook`.
+- **`vercel.json` se lee de la rama que se despliega**, así que el `deploymentEnabled` de `test` no
+  frenaba a `claude`: hubo que añadir un `vercel.json` a la propia rama huérfana. Confirmado con 0
+  despliegues en su último commit.
+- **Trampa documentada:** el ciclo `git worktree add`/`remove` deja el árbol principal en `main` y el
+  código desaparece del disco (pasó dos veces). Se recupera con `git checkout test`; mejor dejar el
+  worktree del contexto puesto.
+
 ## 2026-07-30 (tarde) — Claude
 
 **Datos reales del grupo, infraestructura terminada y rama de contexto publicada.**
