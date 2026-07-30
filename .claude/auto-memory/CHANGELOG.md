@@ -2,6 +2,31 @@
 
 Historial automático del proyecto. Fecha en formato `AAAA-MM-DD`.
 
+## 2026-07-30 (tarde) — Claude
+
+**Datos reales del grupo, infraestructura terminada y rama de contexto publicada.**
+
+- **Datos reales en lugar de inventados.** El **BORME-C-2020-7534** y los registros mercantiles
+  (Empresia, Informa, Infonif) dieron mucho más de lo esperado: CIF y constitución de la matriz
+  (A31038839, 16/04/1973), la **estructura societaria completa** (seis sociedades), **46 personas**,
+  facturación **> 30 M€** y los **siete huertos solares** de Maizurgui Renovables. Hallazgo que
+  cambia el contenido: **la soldadura es una empresa hermana** (Manfisa Welding Products, CIF
+  B71407951, 17 empleados), no una línea de Manfisa Wire. Sólo quedan sin validar las tablas
+  técnicas, los formatos de bobina, la capacidad y las certificaciones.
+- **Ningún CIF inventado.** El de Manfisa Wire no es público y se dejó fuera: un identificador
+  oficial falso no es equiparable a una especificación técnica plausible.
+- **Production Branch corregida** en Vercel: `manfisa` → `main`, `manfisatest` → `test`. El endpoint
+  bueno es `PATCH /v9/projects/{id}/branch`; documentado en `despliegue-vercel` junto con la trampa
+  de que `POST …/link` devuelve 200 e ignora el campo.
+- **Rama `claude` creada y subida** con `git worktree add --orphan`, en un worktree aparte para no
+  tocar el árbol de código.
+- **El webhook de revalidación NO se pudo automatizar** y queda pendiente a mano. Nueva memoria
+  `panel-administracion-webhook` con el porqué: el CLI es interactivo y la Management API que
+  responde es la antigua, que rechaza `secret` — y un hook sin secreto daría 401 en cada publicación
+  mostrándose en verde en el panel.
+- **Incidencia:** el árbol de trabajo apareció en `main` a mitad de sesión (código borrado del
+  disco). Se recuperó con `git checkout test`; nada se perdió porque ya estaba en `origin/test`.
+
 ## 2026-07-30 — Claude (con Luis Fernández Sangil)
 
 **Arranque del proyecto: web corporativa trilingüe completa.**

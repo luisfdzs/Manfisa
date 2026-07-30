@@ -11,21 +11,26 @@ EN ISO 18273 y de la práctica habitual — **no datos facilitados por Manfisa**
 
 ## Qué está verificado
 
-Contra manfisa.com, Informa D&B y la Asociación Española del Aluminio (ver
-[[identidad-manfisa]]): razón social y estructura del grupo, dirección, CP, teléfono, fax, email,
-coordenadas, fundación en 1973, Dalian Manfisa (2008), las cinco actividades, energía 100 %
-renovable y la planta fotovoltaica.
+Bastante más de lo que parecía al principio: el **BORME-C-2020-7534** da la estructura societaria
+oficial, y Empresia/Informa/Infonif dan CIF, fechas, plantilla y facturación. Detalle y fuentes en
+[[identidad-manfisa]]. En particular son **datos reales**: la fundación (16/04/1973), el CIF de la
+matriz, las seis sociedades del grupo, las **46 personas** de plantilla, la facturación **> 30 M€**,
+los **siete huertos solares** y todos los datos de contacto.
 
 ## Qué hay que confirmar antes de publicar
 
 1. **Tablas de aleaciones** — designaciones, purezas, resistencias, alargamientos y diámetros de
    las cinco líneas.
 2. **Formatos de suministro** — pesos de bobina y embalajes.
-3. **Cifras de portada** — capacidad instalada (se ha puesto 3.500 t, que es la de Electrolead) y
-   facturación.
+3. **Capacidad instalada** — las 3.500 t son **la cifra que publica Electrolead**, puesta como orden
+   de magnitud. Es el único número de la portada que no es de Manfisa.
 4. **Certificaciones** — números y alcances de ISO 9001 e ISO 14001. Si alguna no está vigente, se
    **borra la entrada**: en una auditoría de cliente, una certificación caducada en la web pesa más
    que no tenerla.
+
+**Ningún CIF inventado.** El de Manfisa Wire no es público y no se ha rellenado: un identificador
+oficial falso no es lo mismo que una especificación técnica plausible, y en una web corporativa se
+lee como dato fiscal. La web no muestra ninguno.
 5. **Logotipo** — el wordmark (`components/layout/Wordmark.tsx`) y el favicon
    (`scripts/generate-brand-assets.mjs`) son un montaje tipográfico provisional. Cuando llegue el
    vector oficial se sustituyen ahí y nada más cambia.

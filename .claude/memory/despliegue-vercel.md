@@ -17,12 +17,28 @@ las tres variables en production/preview/development, y **ya desplegados**:
 - **https://manfisatest.vercel.app** — verificado con `BASE=… npm run check:mobile`: **26/26**.
 - **https://manfisa.vercel.app** — también sirve la web.
 
-⚠️ **Los dos proyectos están desplegando la MISMA rama (`test`).** Al conectar el repo, Vercel tomó
-como Production Branch la primera rama que vio con código, no `main`. Se sabe porque
-`manfisa.vercel.app` sirve la web **con `Disallow: /`**: si hubiera construido `main`, el build habría
-fallado (en `main` sólo hay el README), y si el ref fuera `main` sería indexable. Hay que corregirlo
-a mano en Settings › Git › Production Branch: **`manfisa` → `main`**, **`manfisatest` → `test`**. El
-CLI no expone ese ajuste.
+## Cómo se cambia la Production Branch (el CLI no puede)
+
+`vercel project` no tiene comando para esto y `PATCH /v9/projects/{id}` **rechaza** tanto `link`
+como `productionBranch` («should NOT have additional property»). El endpoint que funciona es uno
+aparte, y no es evidente:
+
+```
+PATCH https://api.vercel.com/v9/projects/{projectId}/branch
+{ "branch": "test" }
+```
+
+`POST /v9/projects/{id}/link` devuelve 200 pero **ignora** el `productionBranch` que le pases: es la
+trampa que hace perder el rato.
+
+Estado actual: **`manfisa` → `main`**, **`manfisatest` → `test`** (corregido el 2026-07-30).
+
+⚠️ **Ojo con el primer despliegue de un proyecto nuevo.** Al conectar el repo, los dos proyectos
+tenían `productionBranch: "main"` y aun así **ambos desplegaron `ref=test` como `target: production`**
+(`sha=2c8dc01`). Vercel promociona el primer despliegue de un proyecto sin producción previa. Efecto
+práctico: `manfisa.vercel.app` está sirviendo un build de `test`. No es urgente porque salió
+`noindex`, y se resolverá solo en cuanto `main` reciba la promoción de verdad; si molesta antes,
+`vercel remove` ese despliegue.
 
 **La red de seguridad funcionó.** Aunque `manfisa` desplegó en `target: production`, la web salió con
 `noindex` y `Disallow: /` porque el criterio es `VERCEL_GIT_COMMIT_REF === 'main'` y el ref era

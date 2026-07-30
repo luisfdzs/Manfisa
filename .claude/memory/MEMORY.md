@@ -8,6 +8,7 @@ archivo `.md`, nunca aquí.
 - [Pendientes de Manfisa](pendientes-manfisa.md) — **CRÍTICO**: qué datos están sin validar y por qué la web no puede salir de test
 - [Arquitectura de la web](arquitectura-web.md) — stack (Next.js 16 + TS + Tailwind 4), patrones (puerta única, estático primero, tokens, `<Media>`, `spec-table`)
 - [Panel de administración](panel-administracion.md) — Sanity en `/admin`: proyecto `65pypeao`, modelo de contenido y qué puede editar Manfisa
+- [Webhook de revalidación](panel-administracion-webhook.md) — hay que crearlo a mano; por qué ni el CLI ni la Management API sirven, y por qué un hook sin secreto es peor que ninguno
 - [Diseño web y referencias](diseno-web-referencias.md) — lenguaje visual «aluminio»: tokens, tipografía técnica, tablas como ficha impresa
 - [Despliegue en Vercel](despliegue-vercel.md) — dos proyectos (prod ← `main`, test ← `test`) y por qué la indexación no puede depender de `VERCEL_ENV`
 - [Verificación y despliegue](verificacion-y-despliegue.md) — `check:mobile` obligatorio en interfaz; los fallos reales que ya ha cazado
