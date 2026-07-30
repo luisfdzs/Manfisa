@@ -17,6 +17,33 @@ las tres variables en production/preview/development, y **ya desplegados**:
 - **https://manfisatest.vercel.app** — verificado con `BASE=… npm run check:mobile`: **26/26**.
 - **https://manfisa.vercel.app** — también sirve la web.
 
+## `vercel.json` se lee de LA RAMA QUE SE DESPLIEGA
+
+Parece obvio dicho así, pero cuesta un rato: para que la rama `claude` deje de construir los dos
+proyectos en cada push de contexto, **no basta** con poner `git.deploymentEnabled` en el
+`vercel.json` de `test`. Vercel lee el fichero **del commit que está desplegando**, y la rama
+`claude` es huérfana: no tenía `vercel.json`, así que seguía desplegándose.
+
+La solución es que la propia rama `claude` lleve su `vercel.json` con:
+
+```json
+{ "git": { "deploymentEnabled": { "claude": false } } }
+```
+
+Sin `"framework"`, porque en esa rama no hay web que construir.
+
+## El candado de indexación (`SITE_INDEXABLE`)
+
+Desde que las tres ramas están alineadas, la web **también vive en `main`**, así que la condición de
+rama por sí sola publicaría en Google datos técnicos sin validar. `isIndexable()` exige además
+`SITE_INDEXABLE === 'true'`. La variable está puesta a **`false` explícitamente** en los dos
+proyectos y en los tres entornos — explícita y no por ausencia, para que se vea en el panel y nadie
+la interprete como un olvido.
+
+Verificado el 2026-07-30 con `main` ya en producción: `manfisa.vercel.app` sirve la web con
+`noindex, nofollow` y `Disallow: /`. **Levantar el candado es la última tarea antes de salir**, y es
+un cambio de variable en Vercel, sin desplegar desde el repo.
+
 ## Cómo se cambia la Production Branch (el CLI no puede)
 
 `vercel project` no tiene comando para esto y `PATCH /v9/projects/{id}` **rechaza** tanto `link`
